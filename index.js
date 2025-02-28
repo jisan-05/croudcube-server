@@ -42,19 +42,49 @@ async function run() {
         app.get("/campaigns/:email", async (req, res) => {
             const email = req.params.email;
             const query = {
-                userEmail: email
+                userEmail: email,
             };
-            const result = await campaignCollection.find(query).toArray()
-            res.send(result)
+            const result = await campaignCollection.find(query).toArray();
+            res.send(result);
         });
 
-        app.delete('/campaign/:id', async (req,res) => {
+        // for specific update
+        app.get("/updateCampaigns/:id", async (req, res) => {
             const id = req.params.id;
-            console.log("Please delete a id", id)
-            const query = {_id:new ObjectId(id)}
-            const result = await campaignCollection.deleteOne(query)
-            res.send(result)
-        })
+            const query = { _id: new ObjectId(id) };
+            const result = await campaignCollection.findOne(query);
+            res.send(result);
+        });
+
+        app.put("/updateCampaigns/:id", async (req, res) => {
+            const id = req.params.id;
+            const UpdateCampaignData = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    image: UpdateCampaignData.image,
+                    campaignTitle: UpdateCampaignData.campaignTitle,
+                    campaignType: UpdateCampaignData.campaignType,
+                    amount: UpdateCampaignData.amount,
+                    Deadline: UpdateCampaignData.Deadline,
+                },
+            };
+            const result = await campaignCollection.updateOne(
+                filter,
+                updateDoc,
+                options
+            );
+            res.send(result);
+        });
+
+        app.delete("/campaign/:id", async (req, res) => {
+            const id = req.params.id;
+            console.log("Please delete a id", id);
+            const query = { _id: new ObjectId(id) };
+            const result = await campaignCollection.deleteOne(query);
+            res.send(result);
+        });
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
