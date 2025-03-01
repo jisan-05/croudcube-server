@@ -32,7 +32,7 @@ async function run() {
 
         app.post("/campaigns", async (req, res) => {
             const campaign = req.body;
-            console.log(campaign);
+            // console.log(campaign);
             const result = await campaignCollection.insertOne(campaign);
             res.send(result);
         });
@@ -43,6 +43,16 @@ async function run() {
             const result = await campaignDonateCollection.insertOne(donateData)
             res.send(result)
         })
+        // for donate Info Get 
+        app.get("/campaignsDonate/:email", async(req,res) =>{
+            const email = req.params.email;
+            const query = {
+                donateEmail: email,
+            }
+            const result = await campaignDonateCollection.find(query).toArray()
+            res.send(result)
+        })
+
 
         app.get("/campaigns", async (req, res) => {
             const cursor = campaignCollection.find();
@@ -91,7 +101,7 @@ async function run() {
 
         app.delete("/campaign/:id", async (req, res) => {
             const id = req.params.id;
-            console.log("Please delete a id", id);
+            // console.log("Please delete a id", id);
             const query = { _id: new ObjectId(id) };
             const result = await campaignCollection.deleteOne(query);
             res.send(result);
