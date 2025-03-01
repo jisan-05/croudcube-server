@@ -27,12 +27,23 @@ async function run() {
         const database = client.db("campaignDB");
         const campaignCollection = database.collection("campaignCollection");
 
+        const database2 = client.db("campaignDonate")
+        const campaignDonateCollection = database2.collection("campaignDonateCollection")
+
         app.post("/campaigns", async (req, res) => {
             const campaign = req.body;
             console.log(campaign);
             const result = await campaignCollection.insertOne(campaign);
             res.send(result);
         });
+
+        // for donate identify
+        app.post('/campaignsDonate', async(req,res) => {
+            const donateData = req.body;
+            const result = await campaignDonateCollection.insertOne(donateData)
+            res.send(result)
+        })
+
         app.get("/campaigns", async (req, res) => {
             const cursor = campaignCollection.find();
             const result = await cursor.toArray();
